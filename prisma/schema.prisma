@@ -1,0 +1,33 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL") // Ange din Neon-databas-URL här
+}
+
+model Site {
+  id            Int             @id @default(autoincrement())
+  name          String
+  domain        String
+  category      String
+  revenue       Float // Total inkomst för denna sajt
+  traffic       Int // Trafik till sajten
+  expenses      Float // Total utgifter för denna sajt
+  growthRate    Float? // Procentuell förändring (kan vara null om inte applicerbart)
+  totalIncome   Float? // Sammanlagda intäkter för affiliate-länkar
+  totalExpenses Float? // Sammanlagda utgifter för affiliate-länkar
+  links         AffiliateLink[] // Koppling till affiliate-länkar
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+}
+
+model AffiliateLink {
+  id        Int      @id @default(autoincrement())
+  partner   String
+  url       String
+  siteId    Int
+  site      Site     @relation(fields: [siteId], references: [id])
+  createdAt DateTime @default(now())
+}
